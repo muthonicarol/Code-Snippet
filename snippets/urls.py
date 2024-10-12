@@ -1,15 +1,14 @@
+# urls.py
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter #DefaultRouter generates url patterns for viewsets
-from .views import SnippetViewSet, CommentViewSet
+from rest_framework.routers import DefaultRouter
+from .views import SnippetViewSet, CommentViewSet, RegisterViewSet, LoginViewSet
 
-router= DefaultRouter()
-router.register(r'register',SnippetViewSet)
-router.register(r'register', CommentViewSet)
-#this will register the SnippetViewSet and CommentViewSet with the router.
+router = DefaultRouter()
+router.register(r'snippets', SnippetViewSet)
+router.register(r'comments', CommentViewSet)  # Ensure this line is correct
+router.register(r'register', RegisterViewSet, basename='register')
+
 
 urlpatterns = [
-    path('',include (router.urls)),
-
-
+    path('', include(router.urls)),
 ]
-

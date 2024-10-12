@@ -1,19 +1,3 @@
-"""
-URL configuration for snippets_backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponseRedirect
@@ -21,14 +5,32 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-
+from snippets.views import LoginViewSet, UserRegistrationView, UserListView, SnippetListCreateView, SnippetDetailView, CommentListCreateView, CommentDetailView
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('api/snippets/', include ('snippets.urls')),
-    path('', lambda request: HttpResponseRedirect('/api/snippets/')),
+
+    # Authentication Endpoints (JWT)
+    path('api/auth/login/', LoginViewSet.as_view({'post': 'post'}), name='login'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    # User Registration and List
+    path('api/auth/register/', UserRegistrationView.as_view(), name='user-register'),  # New user registration endpoint
+    path('api/auth/users/', UserListView.as_view(), name='user-list'),  # View for listing all users
 
+    # Snippets Endpoints
+    path('api/snippets/', SnippetListCreateView.as_view(), name='snippet-list-create'),  # List and create snippets
+    path('api/snippets/<int:pk>/', SnippetDetailView.as_view(), name='snippet-detail'),  # Retrieve, update, and delete snippets
+
+    # Comments Endpoints
+    path('api/snippets/<int:snippet_id>/comments/', CommentListCreateView.as_view(), name='comment-list-create'),  # List and create comments for a snippet
+    path('api/comments/<int:pk>/', CommentDetailView.as_view(), name='comment-detail'),  # Retrieve, update, and delete comments
+
+    # Redirect root to snippets
+    path('', lambda request: HttpResponseRedirect('/api/snippets/')),
+
+    # Including other app URLs
+    path('api/snippets/', include('snippets.urls')),  # If you have additional URLs in your snippets app
 ]
