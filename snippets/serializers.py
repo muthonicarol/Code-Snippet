@@ -1,59 +1,53 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.views import APIView
-from .models import Snippet, Comment
-from .serializers import SnippetSerializer, CommentSerializer, UserSerializer
+from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import Snippet, Comment, UserProfile, FavoriteSnippet
 
-# Snippet Views
-class SnippetListCreateView(generics.ListCreateAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can create snippets
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')  # You can include other fields as needed
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)  # Associate the snippet with the logged-in user
 
-class SnippetDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access or modify
+class SnippetSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)  # Nested serializer to display owner details
 
-# Comment Views
-class CommentListCreateView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can create comments
+    class Meta:
+        model = Snippet
+        fields = ('id', 'title', 'code', 'description', 'language', 'owner', 'created_at', 'updated_at')
+        read_only_fields = ('owner', 'created_at', 'updated_at')  # These fields are auto-generated
 
-    def get_queryset(self):
-        # Filter comments by the snippet
-        snippet_id = self.kwargs.get('snippet_id')
-        return Comment.objects.filter(snippet_id=snippet_id)
 
-    def perform_create(self, serializer):
-        # Associate the comment with the snippet and user
-        snippet_id = self.kwargs.get('snippet_id')
-        snippet = Snippet.objects.get(id=snippet_id)
-        serializer.save(snippet=snippet, user=self.request.user)
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)  # Nested serializer to display user details
 
-class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    class Meta:
+        model = Comment
+        fields = ('id', 'snippet', 'user', 'text', 'created_at')
+        read_only_fields = ('user', 'created_at')  # User and created_at are auto-generated
 
-# User Registration View
-class UserRegistrationView(APIView):
-    permission_classes = [AllowAny]  # Anyone can register
 
-    def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)  # Nested serializer to display user details
 
-# User List View (Optional, to list all users)
-class UserListView(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can view the user list
+    class Meta:
+        model = UserProfile
+        fields = ('user', 'bio', 'profile_picture')
+        read_only_fields = ('user',)  # User is auto-generated
+
+
+class FavoriteSnippetSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)  # Nested serializer to display user details
+    snippet = SnippetSerializer(read_only=True)  # Nested serializer to display snippet details
+
+    class Meta:
+        model = FavoriteSnippet
+        fields = ('user', 'snippet')
+        read_only_fields = ('user', 'snippet')  # These fields are auto-generated
+
+    def create(self, validated_data):
+        # Ensure that a user can only favorite a snippet once
+        favorite, created = FavoriteSnippet.objects.get_or_create(
+            user=validated_data['user'],
+            snippet=validated_data['snippet']
+        )
+        return favorite
