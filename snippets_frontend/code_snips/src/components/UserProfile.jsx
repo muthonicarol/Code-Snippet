@@ -1,47 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; // Import your AuthContext
 
 const UserProfile = () => {
-    const { authState } = useAuth();
+    const { currentUser } = useAuth(); // Get the current user from context
     const [profile, setProfile] = useState(null);
-    const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate();
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (!authState.token) {
-                // Redirect to sign-in if not authenticated
-                navigate('/signin');
-                return;
-            }
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/snippets/profile/', {
+                const response = await axios.get('http://localhost:8000/api/profile/', {
                     headers: {
-                        Authorization: `Bearer ${authState.token}`, // Correct syntax for adding token
+                        'Authorization': `Bearer ${currentUser.token}`, // Add your token here
                     },
                 });
-                setProfile(response.data.profile || {}); // Handle missing profile data
+                setProfile(response.data);
             } catch (error) {
-                setErrorMessage('Failed to fetch profile data.');
+                console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+                setError(error.response?.data?.message || "Failed to fetch profile.");
             }
         };
 
-        fetchProfile();
-    }, [authState.token, navigate]);
+        if (currentUser) { // Check if user is authenticated
+            fetchProfile();
+        } else {
+            setError("User not authenticated.");
+        }
+    }, [currentUser]);
+
+    if (error) {
+        return <div>{error}</div>; // Display error message
+    }
 
     if (!profile) {
-        return <p>Loading profile...</p>; // Loading state
+        return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <h2>User Profile: {profile.username}</h2>
+            <h1>{profile.username}</h1>
             <p>Email: {profile.email}</p>
-            <p>Joined: {new Date(profile.joined).toLocaleDateString()}</p> {/* Display join date */}
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-            <button onClick={() => alert('Edit feature coming soon!')}>Edit Profile</button>
+            {/* Render other profile information here */}
         </div>
     );
 };

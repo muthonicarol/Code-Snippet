@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import CommentSection from './CommentSection';
 
 const SingleSnippet = () => {
-  const { snippetId } = useParams(); // Get the snippet ID from the URL
-  const [snippet, setSnippet] = useState(null); // State for the snippet
-  const navigate = useNavigate(); // For navigation
-  
-  useEffect(() => {
-    axios.get(`http://localhost:8000/api/snippets/${snippetId}/`)
-      .then(response => setSnippet(response.data))
-      .catch(error => console.error('Error fetching snippet:', error));
-  }, [snippetId]);
+    const { id } = useParams(); // Assuming the route is defined with :id
+    const [snippet, setSnippet] = useState(null);
+    const [error, setError] = useState('');
 
-  if (!snippet) return <div>Loading...</div>; // Show loading until data is fetched
+    useEffect(() => {
+        const fetchSnippet = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/snippets/${id}/`); // Use the correct URL format
+                setSnippet(response.data);
+            } catch (error) {
+                console.error("Error fetching snippet:", error.response ? error.response.data : error.message);
+                setError(error.response?.data?.message || "Failed to fetch snippet details.");
+            }
+        };
 
-  return (
-    <div>
-      {/* Back to snippets button */}
-      <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>
-        Back to Snippets
-      </button>
+        fetchSnippet();
+    }, [id]);
 
-      {/* Display the snippet details */}
-      <h1>{snippet.title}</h1>
-      <pre style={{ backgroundColor: '#f5f5f5', padding: '10px' }}>
-        <code>{snippet.code}</code>
-      </pre>
-      <p>{snippet.description}</p>
-      <p><strong>Language:</strong> {snippet.language}</p>
+    if (error) {
+        return <div>{error}</div>; // Display error message
+    }
 
-      {/* Comment Section */}
-      <CommentSection snippetId={snippetId} />
-    </div>
-  );
+    if (!snippet) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div>
+            <h1>{snippet.title}</h1>
+            <pre>{snippet.code}</pre>
+            <p>{snippet.description}</p>
+        </div>
+    );
 };
 
 export default SingleSnippet;

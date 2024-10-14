@@ -38,13 +38,24 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class SnippetViewSet(viewsets.ModelViewSet):
-    queryset = Snippet.objects.all()
+    """
+    A viewset for creating, retrieving, updating, and deleting Snippets.
+    """
+    queryset = Snippet.objects.all()  # Query all snippets
     serializer_class = SnippetSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can interact with snippets
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)  # Set the owner to the logged-in user
+        """
+        When a new snippet is created, set the owner to the currently logged-in user.
+        """
+        serializer.save(owner=self.request.user)  # Save the logged-in user as the owner of the snippet
 
+    def get_queryset(self):
+        """
+        Optionally restrict the returned snippets to the ones owned by the currently authenticated user.
+        """
+        return Snippet.objects.filter(owner=self.request.user)  #
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -63,11 +74,10 @@ class CommentViewSet(viewsets.ModelViewSet):
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)  # Set the user to the logged-in user
-
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
 class FavoriteSnippetViewSet(viewsets.ModelViewSet):
     queryset = FavoriteSnippet.objects.all()
     serializer_class = FavoriteSnippetSerializer

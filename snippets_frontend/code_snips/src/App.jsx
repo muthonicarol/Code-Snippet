@@ -5,7 +5,7 @@ import Home from './components/Home';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import SnippetList from './components/SnippetList';
-import SingleSnippet from './components/SingleSnippet';
+import SnippetDetail from './components/SnippetDetail';
 import CreateSnippet from './components/CreateSnippet';
 import Dashboard from './components/Dashboard';
 import Navbar from './components/Navbar';
@@ -27,7 +27,7 @@ function App() {
           
           {/* Protected routes for authenticated users */}
           <Route path="/snippets" element={<ProtectedRoute><SnippetList /></ProtectedRoute>} />
-          <Route path="/snippets/:id" element={<ProtectedRoute><SingleSnippet /></ProtectedRoute>} />
+          <Route path="/snippets/:id" element={<ProtectedRoute><SnippetDetail/></ProtectedRoute>} />
           <Route path="/create-snippet" element={<ProtectedRoute><CreateSnippet /></ProtectedRoute>} />
           <Route path="/edit-snippet/:id" element={<ProtectedRoute><EditSnippet /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

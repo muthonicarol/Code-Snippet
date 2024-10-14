@@ -28,6 +28,10 @@ class SnippetSerializer(serializers.ModelSerializer):
         model = Snippet
         fields = ('id', 'title', 'code', 'description', 'language', 'owner', 'created_at', 'updated_at')
         read_only_fields = ('owner', 'created_at', 'updated_at')  # These fields are auto-generated
+    def create(self, validated_data):
+        # You can add any additional validation or processing here
+        return Snippet.objects.create(**validated_data)
+    
 
 
 class CommentSerializer(serializers.ModelSerializer):

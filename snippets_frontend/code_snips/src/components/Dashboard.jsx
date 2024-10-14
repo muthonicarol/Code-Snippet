@@ -10,7 +10,7 @@ const Dashboard = () => {
 
     // Check if user is authenticated
     if (!authState.user) {
-        return <p>Please log in to view your dashboard.</p>;
+        return <p style={styles.errorMessage}>Please log in to view your dashboard.</p>;
     }
 
     const handleLogout = () => {
@@ -21,26 +21,21 @@ const Dashboard = () => {
 
     return (
         <div style={styles.container}>
-            <h1>Welcome to Your Dashboard, {authState.user.username}!</h1>
-            <p>Your exclusive features will be displayed here.</p>
+            <h1 style={styles.heading}>Welcome to Your Dashboard, {authState.user.username}!</h1>
+            <p style={styles.subheading}>Your exclusive features will be displayed here.</p>
 
             <div style={styles.profileContainer}>
-                <h2>Profile Information</h2>
+                <h2 style={styles.sectionHeading}>Profile Information</h2>
                 <p><strong>Email:</strong> {authState.user.email}</p>
                 <p><strong>Username:</strong> {authState.user.username}</p>
             </div>
 
             <div style={styles.recentActivity}>
-                <h2>Recent Activity</h2>
+                <h2 style={styles.sectionHeading}>Recent Activity</h2>
                 <ul>
                     <li>Logged in on {new Date().toLocaleString()}</li>
                     {/* Add more recent activities here */}
                 </ul>
-            </div>
-
-            <div style={styles.settings}>
-                <h2>Settings</h2>
-                <button onClick={() => navigate('/settings')} style={styles.button}>Go to Settings</button>
             </div>
 
             <button onClick={handleLogout} style={styles.button}>Logout</button>
@@ -54,33 +49,55 @@ const styles = {
         textAlign: 'center',
         backgroundColor: '#f4f7fa',
         minHeight: '100vh',
+        fontFamily: 'Arial, sans-serif',
+    },
+    heading: {
+        color: '#333',
+        marginBottom: '10px',
+    },
+    subheading: {
+        color: '#555',
+        marginBottom: '20px',
     },
     profileContainer: {
-        margin: '20px 0',
-        padding: '10px',
+        margin: '20px auto',
+        padding: '20px',
         border: '1px solid #ccc',
         borderRadius: '5px',
+        maxWidth: '400px',
+        backgroundColor: '#fff',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     },
     recentActivity: {
-        margin: '20px 0',
-        padding: '10px',
+        margin: '20px auto',
+        padding: '20px',
         border: '1px solid #ccc',
         borderRadius: '5px',
+        maxWidth: '400px',
+        backgroundColor: '#fff',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     },
-    settings: {
-        margin: '20px 0',
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '5px',
+    sectionHeading: {
+        color: '#4CAF50',
+        marginBottom: '10px',
     },
     button: {
         padding: '10px 20px',
-        margin: '5px',
+        margin: '20px',
         backgroundColor: '#4CAF50',
         color: '#fff',
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    buttonHover: {
+        backgroundColor: '#45a049',
+    },
+    errorMessage: {
+        color: 'red',
+        fontSize: '18px',
+        textAlign: 'center',
     },
 };
 
