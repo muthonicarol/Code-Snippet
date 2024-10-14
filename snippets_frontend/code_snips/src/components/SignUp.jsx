@@ -15,8 +15,15 @@ const SignUp = () => {
     // Function to handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Basic validation for password matching
+        if (password !== password2) {
+            setErrorMessage("Passwords do not match");
+            return;
+        }
+
         axios
-            .post('http://127.0.0.1:8000/api/snippets/register/', { username, email, password, password2})
+            .post('http://127.0.0.1:8000/api/snippets/users/', { username, email, password }) // Use /users/ endpoint
             .then((response) => {
                 alert('Registration Successful! Please Login');
                 navigate('/signin');
@@ -25,10 +32,11 @@ const SignUp = () => {
                 if (error.response) {
                     console.error('Error during signup:', error.response.data);  // Log the backend error message
                     alert('Registration failed: ' + JSON.stringify(error.response.data)); // Show exact error to the user
+                } else {
+                    alert('Registration failed: ' + error.message); // Handle network errors
                 }
             });
     };
-    
 
     return (
         <div style={styles.container}>

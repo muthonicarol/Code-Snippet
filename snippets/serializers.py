@@ -3,10 +3,23 @@ from django.contrib.auth.models import User
 from .models import Snippet, Comment, UserProfile, FavoriteSnippet
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)  # Don't expose the password
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')  # You can include other fields as needed
+        fields = ['username', 'email', 'password']
 
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])  # Hash the password
+        user.save()  # Save the user instance
+        return user
+
+     
+    
 
 class SnippetSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)  # Nested serializer to display owner details

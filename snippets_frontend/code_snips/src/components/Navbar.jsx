@@ -1,28 +1,27 @@
-// Navbar.jsx
+// src/components/Navbar.js
+
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
-  const { authState, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout(); // Call the logout function from AuthContext
-    navigate('/'); // Redirect to home after logging out
-  };
+  const { authState } = useAuth(); // Get authState
 
   return (
     <nav>
       <Link to="/">Home</Link>
-
-      {!authState.user ? (
+      {authState.user ? (
+        <>
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/profile">Profile</Link>
+          <Link to="/snippets">My Snippets</Link>
+          <Link to="/favorites">Favorites</Link>
+        </>
+      ) : (
         <>
           <Link to="/signin">Sign In</Link>
           <Link to="/signup">Sign Up</Link>
         </>
-      ) : (
-        <button onClick={handleLogout}>Logout</button>
       )}
     </nav>
   );

@@ -1,25 +1,39 @@
-import React, { createContext, useContext, useState } from 'react';
+// src/contexts/AuthContext.jsx
+
+import React, { createContext, useContext, useReducer } from 'react';
 
 const AuthContext = createContext();
 
+const initialState = {
+  user: null,
+  token: null,
+};
+
+const authReducer = (state, action) => {
+  switch (action.type) {
+    case 'LOGIN':
+      return { ...state, user: action.payload.user, token: action.payload.token };
+    case 'LOGOUT':
+      return initialState; // Reset to initial state
+    default:
+      return state;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
-    const [authState, setAuthState] = useState({ user: null, token: null });
+  const [authState, dispatch] = useReducer(authReducer, initialState);
 
-    const login = (userData, token) => {
-        setAuthState({ user: userData, token });
-    };
+  const logout = () => {
+    localStorage.removeItem('token'); // Remove token from local storage
+    dispatch({ type: 'LOGOUT' }); // Reset auth state
+  };
 
-    const logout = () => {
-        setAuthState({ user: null, token: null });
-    };
-
-    return (
-        <AuthContext.Provider value={{ authState, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ authState, dispatch, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
+// Custom hook for consuming the AuthContext
+export const useAuth = () => useContext(AuthContext);

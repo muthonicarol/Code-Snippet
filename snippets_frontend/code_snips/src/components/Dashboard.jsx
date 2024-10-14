@@ -1,3 +1,5 @@
+// src/components/Dashboard.js
+
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +14,7 @@ const Dashboard = () => {
     }
 
     const handleLogout = () => {
+        console.log('Logout button clicked'); // Debugging log
         logout(); // Call the logout function from AuthContext
         navigate('/'); // Redirect to home page after logout
     };
