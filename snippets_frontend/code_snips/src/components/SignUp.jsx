@@ -1,37 +1,35 @@
 import React, { useState } from 'react';
-import axios from 'axios';  // HTTP client library for sending registration data to the backend.
-import { useNavigate, Link } from 'react-router-dom';  // Hooks for navigation and linking.
+import axios from 'axios'; // HTTP client library for sending registration data to the backend.
+import { useNavigate } from 'react-router-dom'; // Hooks for navigation.
 
 const SignUp = () => {
-    // State variables for form inputs and error handling.
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [password2, setPassword2] = useState('');  // Added for password confirmation.
-    const [errorMessage, setErrorMessage] = useState('');  // To show error messages.
+    const [password2, setPassword2] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const navigate = useNavigate();  // Hook to navigate after registration.
+    const navigate = useNavigate(); // Hook to navigate after registration.
 
-    // Function to handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Basic validation for password matching
+        // Password matching
         if (password !== password2) {
             setErrorMessage("Passwords do not match");
             return;
         }
 
         axios
-            .post('http://127.0.0.1:8000/api/snippets/users/', { username, email, password }) // Use /users/ endpoint
+            .post('http://127.0.0.1:8000/api/snippets/users/', { username, email, password })
             .then((response) => {
                 alert('Registration Successful! Please Login');
                 navigate('/signin');
             })
             .catch((error) => {
                 if (error.response) {
-                    console.error('Error during signup:', error.response.data);  // Log the backend error message
-                    alert('Registration failed: ' + JSON.stringify(error.response.data)); // Show exact error to the user
+                    console.error('Error during signup:', error.response.data);
+                    alert('Registration failed: ' + JSON.stringify(error.response.data)); // Show error to the user
                 } else {
                     alert('Registration failed: ' + error.message); // Handle network errors
                 }
@@ -40,14 +38,12 @@ const SignUp = () => {
 
     return (
         <div style={styles.container}>
-            <nav style={styles.navbar}>
-                <Link to="/" style={styles.homeLink}>Home</Link>
-            </nav>
+            <div style={styles.overlay}></div>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <h2 style={styles.title}>Sign Up</h2>
-                {errorMessage && <p style={styles.error}>{errorMessage}</p>}  {/* Display error message if exists */}
+                
+                {errorMessage && <p style={styles.error}>{errorMessage}</p>}
 
-                {/* Username input */}
                 <input
                     type="text"
                     placeholder="Username"
@@ -57,7 +53,6 @@ const SignUp = () => {
                     required
                 />
 
-                {/* Email input */}
                 <input
                     type="email"
                     placeholder="Email"
@@ -67,7 +62,6 @@ const SignUp = () => {
                     required
                 />
 
-                {/* Password input */}
                 <input
                     type="password"
                     placeholder="Password"
@@ -77,7 +71,6 @@ const SignUp = () => {
                     required
                 />
 
-                {/* Confirm Password input */}
                 <input
                     type="password"
                     placeholder="Confirm Password"
@@ -87,7 +80,6 @@ const SignUp = () => {
                     required
                 />
 
-                {/* Register button */}
                 <button type="submit" style={styles.button}>Register</button>
             </form>
         </div>
@@ -101,53 +93,63 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        backgroundColor: '#f5f5f5',
+        backgroundImage: 'url("https://cdn.pixabay.com/photo/2015/06/01/09/05/laptop-793046_1280.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        position: 'relative',
     },
-    navbar: {
+    overlay: {
         position: 'absolute',
-        top: '10px',
-        left: '20px',
-    },
-    homeLink: {
-        textDecoration: 'none',
-        fontSize: '16px',
-        color: '#007bff',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark overlay for better text visibility
+        zIndex: 1,
     },
     form: {
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         padding: '40px',
         borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
         maxWidth: '400px',
         width: '100%',
         textAlign: 'center',
+        zIndex: 2,
     },
     title: {
         marginBottom: '20px',
-        fontSize: '24px',
-        color: '#333',
+        fontSize: '28px',
+        color: '#7B5B29', // Dark brown color for the title
+        fontWeight: '600',
     },
     input: {
         width: '100%',
-        padding: '10px',
+        padding: '12px',
         marginBottom: '15px',
-        borderRadius: '4px',
-        border: '1px solid #ccc',
+        borderRadius: '5px',
+        border: '1px solid #A16A29', // Lighter brown for input border
         fontSize: '16px',
+        transition: 'border 0.3s',
     },
     button: {
         width: '100%',
-        padding: '10px',
-        backgroundColor: '#28a745',
-        color: '#fff',
+        padding: '12px',
+        backgroundColor: '#D1A25A', // Light yellow for button
+        color: '#7B5B29', // Dark brown for button text
         border: 'none',
-        borderRadius: '4px',
+        borderRadius: '5px',
         fontSize: '16px',
         cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    buttonHover: {
+        backgroundColor: '#B18C3B', // Darker yellow on hover
     },
     error: {
         color: 'red',
         marginBottom: '10px',
+        fontSize: '14px',
     },
 };
 

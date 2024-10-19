@@ -12,7 +12,7 @@ const CommentSection = ({ snippetId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/snippets/${snippetId}/comments/`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/snippets/${snippetId}/comments/`);
         setComments(response.data);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -36,7 +36,7 @@ const CommentSection = ({ snippetId }) => {
       };
 
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/snippets/${snippetId}/comments/',
+        `http://127.0.0.1:8000/api/snippets/${snippetId}/comments/`,
         { text: newComment },
         config
       );

@@ -43,18 +43,93 @@ const CreateSnippet = () => {
   };
 
   return (
-    <div>
-      <h2>Create a New Snippet</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Snippet Title" required />
-        <textarea value={code} onChange={(e) => setCode(e.target.value)} placeholder="Your Code Here" required />
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" required />
-        <input type="text" value={language} onChange={(e) => setLanguage(e.target.value)} placeholder="Programming Language" required />
-        <button type="submit">Create Snippet</button>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Create a New Snippet</h2>
+      {errorMessage && <p style={styles.error}>{errorMessage}</p>}
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input 
+          type="text" 
+          value={title} 
+          onChange={(e) => setTitle(e.target.value)} 
+          placeholder="Snippet Title" 
+          required 
+          style={styles.input}
+        />
+        <textarea 
+          value={code} 
+          onChange={(e) => setCode(e.target.value)} 
+          placeholder="Your Code Here" 
+          required 
+          style={{ ...styles.input, height: '150px' }}
+        />
+        <textarea 
+          value={description} 
+          onChange={(e) => setDescription(e.target.value)} 
+          placeholder="Description" 
+          required 
+          style={{ ...styles.input, height: '100px' }}
+        />
+        <input 
+          type="text" 
+          value={language} 
+          onChange={(e) => setLanguage(e.target.value)} 
+          placeholder="Programming Language" 
+          required 
+          style={styles.input}
+        />
+        <button type="submit" style={styles.button}>Create Snippet</button>
       </form>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    maxWidth: '600px',
+    margin: '50px auto',
+    padding: '20px',
+    backgroundColor: '#f7f3e9', // Light brown background
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: '1.8rem',
+    color: '#5a3d1a', // Dark brown for the title
+    marginBottom: '20px',
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: '10px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
+  },
+  input: {
+    padding: '10px',
+    fontSize: '1rem',
+    border: '1px solid #d4a437', // Yellow border
+    borderRadius: '5px',
+    outline: 'none',
+    backgroundColor: '#fff',
+    color: '#5a3d1a', // Dark brown for input text
+  },
+  button: {
+    padding: '10px 15px',
+    backgroundColor: '#d4a437', // Yellow button
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    transition: 'background-color 0.3s',
+  },
+  buttonHover: {
+    backgroundColor: '#b38730', // Darker yellow on hover
+  },
 };
 
 export default CreateSnippet;

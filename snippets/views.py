@@ -55,7 +55,7 @@ class SnippetViewSet(viewsets.ModelViewSet):
         """
         Optionally restrict the returned snippets to the ones owned by the currently authenticated user.
         """
-        return Snippet.objects.filter(owner=self.request.user)  #
+        return Snippet.objects.all() 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
